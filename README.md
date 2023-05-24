@@ -4,6 +4,6 @@ https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2656.13425
 
 R code used in the analysis of site fidelity
 
-Data files only include: (1) example raw GPS telemetry dataset from Serengeti wildebeest as an example, (2) derived site fidelity file
+Data files only include: (1) example raw GPS telemetry dataset from Serengeti wildebeest and zebra as an example, (2) derived site fidelity file
 
 Contact: <thomas.morrison@glasgow.ac.uk>
