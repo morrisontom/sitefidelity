@@ -1,4 +1,4 @@
-# sitefidelity
+# Drivers of site fidelity in ungulates
 Morrison TA, Merkle J, Hopcraft JGC, Aikens EO, Beck JL, Boone RB, Courtemanch A, Dwinnell SP, Fairbanks WS, Griffith B, Middleton AD, Monteith KL, Oates B, Riotte-Lambert L, Sawyer H, Smith K, Stabach JA, Taylor KL, Kauffman MJ. 2021. Drivers of site fidelity in ungulates. Journal of Animal Ecology, 90, 4, 955-966.
 https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2656.13425
 
