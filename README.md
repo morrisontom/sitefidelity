@@ -15,4 +15,4 @@ Contact: <thomas.morrison@glasgow.ac.uk>
 
 [iyd]: https://github.com/morrisontom/sitefidelity/functions/iyd_toshare.R
 [ctime]: https://github.com/morrisontom/sitefidelity/functions/CTime.R
-[cspace]: https://github.com/morrisontom/sitefidelity/functions/CSpace.R
+[cspace]: https://github.com/morrisontom/sitefidelity/blob/80f206c2d66ffd2aa7fad3eebd6d55611bf9be58/functions/Cspace.R
