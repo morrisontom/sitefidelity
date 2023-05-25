@@ -1,0 +1,189 @@
+---
+title: "Introduction to spExtract package"
+author: "Heather McDevitt"
+date: "March 2020"
+output: html_document
+---
+
+This project is designed to install and introduce the package spExtract. 
+
+This file contains similar content as the package vignette titled "spExtract".
+However, here we have installation code and we use real data from the Serengeti 
+ecosystem in Tanzania to demonstrate the functions.
+
+An R script containing the code used in this file is contained within the project,
+titled *"intro_code.R"*.
+
+
+## Introduction 
+
+The package was created to bring together the necessary functions to extract 
+NDVI values (including interpolating between scenes) at spatial locations.
+
+There are three functions required to do NDVI extractions:
+
+ 1. ```build_file_desc```
+ 2. ```build_ndvi_array```
+ 3. ```ndvi_extraction```
+   
+These functions were originally written by Jon Lindsay and have since been
+adapted by Thomas Morrison and Heather McDevitt.
+
+There are two additional helper functions included in this package: 
+
+  4. ```extract_matrix``` 
+  5. ```extract_array```
+  
+These are designed to extract values from a matrix or an array which have been 
+created from a Raster layer or Raster stack, respectively.
+These functions are used within ```ndvi_extraction``` to increase the speed of the function
+but they can also be used for independent extraction protocols, as with ```raster::extract```. 
+
+*Note:* The speed improvement is trivial for small numbers of spatial location and 
+for single raster layers but increases non-linearly so that ```ndvi_extraction``` 
+is much quicker than if it used ```raster::extract``` internally. 
+Examples of using ```extract_matrix``` and ```extract_array``` are included for
+clarity and completeness, but for most small tasks sticking to ```raster::extract``` 
+will be more than sufficient, requiring fewer lines of code and less memory due to fewer
+objects being created.
+
+
+## Installation and set-up
+
+The package is stored on a GitHub repository here: https://github.com/hmcdevitt/spExtract 
+
+To install a package from GitHub you need to use the install_github() function in the devtools package.
+
+```{r eval=F}
+library(devtools)
+install_github("hmcdevitt/spExtract", build_vignettes = TRUE)
+# you need to specifiy to also install the vignettes when installing from github
+library(spExtract) 
+```
+
+Once the package has been installed, you can view the vignettes associated with the package by running:
+
+```{r eval=F}
+vignette(package = "spExtract")
+```
+
+More vignettes with different names will be added as the package is developed.
+To open a specific vignette within any package simply run:
+
+```{r eval=F}
+vignette("name-of-vignette", package = "name-of-package")
+```
+ 
+Additionally, to access the documentation for any function within the package
+the regular ```?``` cammand can be used. For example:
+
+```{r eval = F}
+?extract_matrix
+```
+
+
+## Extract from a single raster
+
+```{r}
+# load elevation raster
+library(raster)
+elevation <- raster::raster("data/DEM_Serengeti.tif")
+```
+
+For this example we are using a subset of location data for one wildebeest tracked
+in January to March 2018. 
+These data are owned by Grant Hopcraft (Grant.Hopcraft@glasgow.ac.uk).
+Please do not use or share beyond this project without permission.
+
+```{r}
+# import location data
+locations <- read.csv("data/locs.csv")
+
+# turn into spatial object for plotting
+library(sp)
+loc_sp <- sp::SpatialPoints(coords = locations[,c("x","y")],
+                        proj4string = raster::crs(elevation)) 
+
+# plot point on elevation raster
+plot(elevation)
+plot(loc_sp, pch=20, add=T)
+```
+
+
+To use ```extract_matrix``` we need to convert the raster into a matrix and create
+objects of the raster extent and raster cell resolution. 
+For more information see ```?extract_matrix```.
+
+```{r}
+# create matrix
+elev_mat <- raster::as.matrix(elevation)
+# create extent object
+elev_ext <- raster::extent(elevation)
+# create cell resolution object
+elev_res <- raster::res(elevation)
+```
+
+
+Now we can extract the values of elevation at the locations and add them to our dataframe.
+
+```{r}
+locations$elev <- spExtract::extract_matrix(matrix = elev_mat, 
+                                            coords = locations[,c("x","y")], 
+                                            raster_extent = elev_ext, 
+                                            raster_res = elev_res)
+
+# view dataframe
+head(locations, 10)
+```
+
+## Extract from an array
+
+To be added.
+
+
+## Extract NDVI
+
+There are three stages to extract interpolated NDVI (iNDVI) values at given locations through time. 
+The function also returns delta NDVI (dNDVI) and, optionally, anomaly NDVI (aNDVI).
+See ```?ndvi_extraction``` for more details on iNDVI, dNDVI and aNDVI.
+
+```{r}
+# Generate description of which files to compile into the NDVI array
+files_desc <- spExtract::build_ndvi_desc(folder = "data/", # folder where NDVI tiffs are stored
+                             start.date = "2018-01-01", # start date of data
+                             end.date = "2018-03-31") # end date of data
+```
+
+```{r}
+# Build array of NDVI layers for files identified in ndvi_files
+ndvi_array <- suppressWarnings(spExtract::build_ndvi_array(files_desc = files_desc)) 
+# note: the warning messages being suppressed here are not a problem and will be fixed inside the function soon
+```
+
+```{r}
+# Import mean NDVI raster for aNDVI calculation
+mean_raster <- raster("data/NDVI_mean_2000049-2019033.tif") # Folder path for mean NDVI rasters
+mean_raster_utm <- projectRaster(from = mean_raster, crs = raster::crs(elevation)) # covert to same projection as everything else
+ndvi_mean_matrix <- as.matrix(mean_raster_utm) # create as matrix
+ndvi_extent <- extent(mean_raster_utm) # create raster extent object
+ndvi_res <- res(mean_raster_utm) # create raster cell resolution object
+```
+
+```{r}
+# Extract iNDVI, dNDVI and aNDVI at locations
+ndvi_results <- spExtract::ndvi_extraction(files_desc = files_desc,
+                                           array = ndvi_array,
+                                           extent = ndvi_extent,
+                                           resolution = ndvi_res,
+                                           avg_matrix = ndvi_mean_matrix,
+                                           date = as.Date(locations$timestamp),
+                                           coords = locations[,c("x","y")])
+
+# Add results to dataframe
+locations <- cbind(locations, ndvi_results)
+
+# View results
+head(locations, 10)
+```
+
+
