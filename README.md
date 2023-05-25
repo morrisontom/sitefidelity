@@ -13,6 +13,6 @@ If interested in predictability metrics, they are written as function in [functi
 
 Contact: <thomas.morrison@glasgow.ac.uk>
 
-[iyd]: https://github.com/morrisontom/sitefidelity/functions/iyd_toshare.R
-[ctime]: https://github.com/morrisontom/sitefidelity/functions/CTime.R
+[iyd]: https://github.com/morrisontom/sitefidelity/blob/91b649241475bf0204b8ea879f19458ec199d475/functions/iyd_toshare.R
+[ctime]: https://github.com/morrisontom/sitefidelity/blob/91b649241475bf0204b8ea879f19458ec199d475/functions/Ctime.R
 [cspace]: https://github.com/morrisontom/sitefidelity/blob/80f206c2d66ffd2aa7fad3eebd6d55611bf9be58/functions/Cspace.R
