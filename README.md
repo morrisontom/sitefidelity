@@ -12,7 +12,7 @@ There are 2 main 'run' scripts:
 
 If interested in the actual calculation of site fidelity, it is written as a function in the 'iyd.R' file. 
 
-If interested in predictability metrics, they are written as function in 'CTime.R' and 'CSpace.R' files. 
+If interested in predictability metrics, they are written as function in 'CTime.R' and 'functions/Cspace.R' files. 
 
 
 Contact: <thomas.morrison@glasgow.ac.uk>
